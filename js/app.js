@@ -420,7 +420,7 @@ class App {
                     </div>
 
                     <!-- Products Grid -->
-                    <div class="product-main-grid">
+                    <div class="grid grid-responsive">
                         ${products.map(p => createProductCard(p)).join('')}
                     </div>
                 </section>
@@ -458,7 +458,7 @@ class App {
                     </div>
                     
                     ${products.length > 0 ? `
-                        <div class="grid grid-responsive" style="padding: 0 2rem;">
+                        <div class="grid grid-responsive">
                             ${products.map(p => createProductCard(p)).join('')}
                         </div>
                     ` : `
@@ -828,7 +828,7 @@ class App {
                         <button class="btn btn-primary mt-3" onclick="app.navigate('shop')">Explore Products</button>
                     </div>
                 ` : `
-                    <div class="product-main-grid">
+                    <div class="grid grid-responsive">
                         ${products.map(p => createProductCard(p)).join('')}
                     </div>
                 `}
