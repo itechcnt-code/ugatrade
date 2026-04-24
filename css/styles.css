@@ -476,6 +476,23 @@ a {
     transform: scale(1.05);
 }
 
+.btn-whatsapp {
+    background: #25D366 !important;
+    color: #ffffff !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+    background: #20ba5a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    color: #ffffff !important;
+}
+
 .nav-icon-btn {
     background: transparent;
     border: none;

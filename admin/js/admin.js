@@ -27,6 +27,7 @@ class AdminApp {
             case 'products': this.renderProducts(); break;
             case 'messages': this.renderMessages(); break;
             case 'chat': this.renderChat(param); break;
+            case 'settings': this.renderSettings(); break;
             default: this.renderDashboard(); break;
         }
     }
@@ -378,6 +379,43 @@ class AdminApp {
         if (!timestamp) return '';
         const date = new Date(timestamp);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    renderSettings() {
+        const apiKey = localStorage.getItem('httpsms_api_key') || '';
+
+        this.mainEl.innerHTML = `
+            <div class="admin-header">
+                <h1>System Settings</h1>
+            </div>
+
+            <div class="admin-card" style="max-width: 600px;">
+                <div class="mb-4">
+                    <h3 class="mb-2"><i class="fa-solid fa-comments-sms text-primary"></i> httpSMS Integration</h3>
+                    <p class="text-muted text-sm mb-4">Configure the API key used for automated payment verification via httpSMS. This key is required to fetch mobile money confirmation messages.</p>
+                    
+                    <div class="form-group mb-3">
+                        <label class="d-block mb-2 font-bold">httpSMS API Key</label>
+                        <input type="password" id="adminHttpsmsKey" class="admin-input w-100" value="${apiKey}" placeholder="Enter your API Key" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 1rem;">
+                        <button class="admin-btn btn-activate px-4" onclick="adminApp.saveSettings()">Save Configuration</button>
+                    </div>
+                </div>
+                
+                <hr style="opacity: 0.1; margin: 2rem 0;">
+                
+                <div class="alert alert-info" style="background: #eff6ff; color: #1e40af; padding: 1rem; border-radius: 4px; border: 1px solid #bfdbfe;">
+                    <i class="fa-solid fa-circle-info mr-2"></i> 
+                    This API key is stored locally and used by the vendor verification logic. Ensure it is kept secure.
+                </div>
+            </div>
+        `;
+    }
+
+    saveSettings() {
+        const key = document.getElementById('adminHttpsmsKey').value.trim();
+        localStorage.setItem('httpsms_api_key', key);
+        alert('Settings saved successfully!');
+        this.renderSettings();
     }
 }
 

@@ -760,7 +760,7 @@ class App {
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <a href="${whatsappLink}" target="_blank" class="btn btn-accent text-center" style="background: #25D366; display:flex; justify-content:center; align-items:center; gap: 0.5rem; padding: 0.8rem 1rem;">
+                            <a href="${whatsappLink}" target="_blank" class="btn btn-whatsapp text-center" style="padding: 0.8rem 1rem;">
                                 <i class="fa-brands fa-whatsapp" style="font-size: 1.3rem;"></i> WhatsApp
                             </a>
                             <button class="btn btn-primary text-center" style="display:flex; justify-content:center; align-items:center; gap: 0.5rem; padding: 0.8rem 1rem;" onclick="app.startChat('${vendor.id}', '${p.id}')">
@@ -1585,6 +1585,7 @@ class App {
     renderSubscription() {
         if(!auth.isLoggedIn()) return this.navigate('login');
         const user = db.getVendor(auth.getUser().id);
+        const apiKey = localStorage.getItem('httpsms_api_key') || '';
 
         this.appEl.innerHTML = `
             <div class="container fade-in py-4">
@@ -1592,66 +1593,67 @@ class App {
                     <button class="btn btn-outline" style="padding: 0.5rem;" onclick="app.navigate('profile')">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <h2 class="mb-0">Choose Your Plan</h2>
+                    <h2 class="mb-0">Boost Your Sales</h2>
                 </div>
 
-                <div class="glass-panel mb-4" style="padding: 1.5rem; text-align: center;">
-                    <p class="mb-1 text-muted">Your Current Plan</p>
-                    <h3 style="font-size: 1.5rem; color: var(--primary);">${user.plan}</h3>
-                    <p class="text-sm">Uploads: <strong>${user.uploadsLeft}</strong></p>
-                </div>
-
-                <div class="grid grid-cols-2 grid-cols-1-mobile gap-4">
-                    <!-- Silver Plan -->
-                    <div class="glass-panel p-4 d-flex flex-column h-100" style="border-top: 5px solid #C0C0C0;">
-                        <div class="text-center mb-4">
-                            <h3 style="color: #666; font-size: 1.5rem;">SILVER</h3>
-                            <div style="font-size: 2rem; font-weight: 800; margin: 1rem 0;">Shs. 5,000<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
-                        </div>
-                        <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex: 1;">
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> 300 Monthly Uploads</li>
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> Verified Badge</li>
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> Priority in Search</li>
-                        </ul>
-                        <div class="form-group mb-3">
-                            <label>Duration</label>
-                            <select id="subSilverDuration" class="form-control">
-                                <option value="1">1 Month - Shs. 5,000</option>
-                                <option value="6">6 Months - Shs. 30,000</option>
-                                <option value="12">12 Months - Shs. 50,000 (Save 20%)</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary w-100" onclick="window.app.promptPayment('SILVER', document.getElementById('subSilverDuration').value)">Upgrade to Silver</button>
+                <div class="glass-panel mb-5 overflow-hidden" style="padding: 0;">
+                    <div style="background: #f8fafc; padding: 1.5rem; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                        <h2 style="margin: 0; font-size: 1.5rem; color: #1e293b; text-transform: uppercase; letter-spacing: 1px;">BOOST PLANS</h2>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="w-100" style="border-collapse: collapse; text-align: center;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e2e8f0;">
+                                    <th style="padding: 1.5rem; font-size: 1.2rem;">1 Month</th>
+                                    <th style="padding: 1.5rem; font-size: 1.2rem; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">3 Months</th>
+                                    <th style="padding: 1.5rem; font-size: 1.2rem;">6 Months</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 1rem; color: #64748b;">Refresh rate 48hrs</td>
+                                    <td style="padding: 1rem; color: #64748b; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">Refresh rate 28hrs</td>
+                                    <td style="padding: 1rem; color: #64748b;">Refresh rate 12hrs</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 5,000</td>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">UGX 10,000</td>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 20,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Gold Plan -->
-                    <div class="glass-panel p-4 d-flex flex-column h-100" style="border-top: 5px solid #FFD700; background: linear-gradient(to bottom, #fffcf0, #ffffff);">
-                        <div class="text-center mb-4">
-                            <h3 style="color: #B8860B; font-size: 1.5rem;">GOLD</h3>
-                            <div style="font-size: 2rem; font-weight: 800; margin: 1rem 0;">Shs. 10,000<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
+                    <div style="padding: 2rem; background: #fff;">
+                        <div class="mb-4" style="font-size: 1.1rem; line-height: 1.8;">
+                            <div class="d-flex gap-3 mb-2">
+                                <span style="font-weight: 800;">1.</span>
+                                <span>Dial: <strong style="color: var(--primary);">*165*3*72532248#</strong></span>
+                            </div>
+                            <div class="d-flex gap-3 mb-2">
+                                <span style="font-weight: 800;">2.</span>
+                                <span>Pay Amount based on plan choice</span>
+                            </div>
+                            <div class="d-flex gap-3 mb-4">
+                                <span style="font-weight: 800;">3.</span>
+                                <span>Copy Transaction ID from SMS and Paste Below</span>
+                            </div>
                         </div>
-                        <ul style="list-style: none; padding: 0; margin-bottom: 2rem; flex: 1;">
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> 1,000 Monthly Uploads</li>
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> Verified Badge</li>
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> Top Featured Listing</li>
-                            <li class="mb-2"><i class="fa-solid fa-check" style="color:#25D366; margin-right: 0.5rem;"></i> WhatsApp Support</li>
-                        </ul>
-                        <div class="form-group mb-3">
-                            <label>Duration</label>
-                            <select id="subGoldDuration" class="form-control">
-                                <option value="1">1 Month - Shs. 10,000</option>
-                                <option value="6">6 Months - Shs. 50,000 (Save 15%)</option>
-                                <option value="12">12 Months - Shs. 90,000 (Save 25%)</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-primary w-100" style="background: linear-gradient(135deg, #B8860B, #FFD700);" onclick="window.app.promptPayment('GOLD', document.getElementById('subGoldDuration').value)">Upgrade to Gold</button>
+
+                        <form onsubmit="app.handlePaymentSubmission(event)" style="max-width: 500px; margin: 0 auto;">
+                            <div class="form-group mb-4">
+                                <label>Transaction ID (from SMS)</label>
+                                <div class="d-flex gap-2">
+                                    <input type="text" id="transactionId" class="form-control" placeholder="e.g. 123456789" required style="font-size: 1.2rem; padding: 0.75rem;">
+                                    <button type="submit" class="btn btn-primary px-4" id="submitPaymentBtn">SUBMIT</button>
+                                </div>
+                            </div>
+                            <div id="paymentStatus" class="text-center" style="display:none; padding: 1rem; border-radius: var(--radius-sm);"></div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="mt-5 text-center text-muted">
-                    <h4>Need a Custom Plan?</h4>
-                    <p>For more than 1,000 uploads or enterprise solutions, please contact our sales team.</p>
-                    <a href="tel:+256700000000" class="btn btn-outline mt-2"><i class="fa-solid fa-phone"></i> Contact Sales</a>
                 </div>
             </div>
         `;
@@ -1744,20 +1746,48 @@ class App {
         }, 1500);
     }
 
-    promptPayment(planName, duration) {
-        duration = Number(duration);
-        const phone = prompt(`Paying for ${planName} Plan (${duration} months). Enter your Airtel/MTN Mobile Money number:`, "07");
-        if(phone && phone.length >= 9) {
-            const pin = prompt("Enter your MM PIN to confirm fake transaction:");
-            if(pin) {
-                db.upgradePlan(auth.getUser().id, planName, duration);
-                alert(`Success! You have activated the ${planName} plan.`);
-                this.renderDashboard();
-            } else {
-                alert("Payment cancelled.");
+    async handlePaymentSubmission(event) {
+        event.preventDefault();
+        const tid = document.getElementById('transactionId').value.trim();
+        const statusDiv = document.getElementById('paymentStatus');
+        const submitBtn = document.getElementById('submitPaymentBtn');
+        const apiKey = localStorage.getItem('httpsms_api_key');
+
+        if (!apiKey) {
+            alert("Please configure your httpSMS API Key at the bottom of the page first.");
+            return;
+        }
+
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = '#f1f5f9';
+        statusDiv.style.color = '#475569';
+        statusDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying payment...';
+        submitBtn.disabled = true;
+
+        try {
+            const result = await db.verifyPayment(tid, apiKey);
+            
+            if (result.success) {
+                db.upgradePlan(auth.getUser().id, result.plan, result.duration);
+                
+                statusDiv.style.background = '#dcfce7';
+                statusDiv.style.color = '#166534';
+                statusDiv.innerHTML = `
+                    <div class="mb-2"><i class="fa-solid fa-circle-check" style="font-size: 2rem;"></i></div>
+                    <strong>Success!</strong><br>
+                    Payment of UGX ${result.amount.toLocaleString()} verified.<br>
+                    Your ${result.plan.replace('_', ' ')} Plan is now active!
+                `;
+
+                setTimeout(() => {
+                    this.navigate('dashboard');
+                }, 3000);
             }
-        } else if (phone) {
-            alert("Invalid phone number.");
+        } catch (error) {
+            statusDiv.style.background = '#fee2e2';
+            statusDiv.style.color = '#991b1b';
+            statusDiv.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${error.message}`;
+            submitBtn.disabled = false;
         }
     }
 
@@ -2086,7 +2116,7 @@ class App {
                         <button class="btn btn-primary" onclick="app.downloadDocumentPdf('${doc.id}')">
                             <i class="fa-solid fa-file-pdf"></i> Download PDF
                         </button>
-                        <button class="btn btn-outline" style="color: #25D366; border-color: #25D366;" onclick="app.shareDocumentWhatsApp('${doc.id}')">
+                        <button class="btn btn-whatsapp" onclick="app.shareDocumentWhatsApp('${doc.id}')">
                             <i class="fa-brands fa-whatsapp"></i> Share
                         </button>
                         <button class="btn btn-outline" onclick="app.shareDocumentChat('${doc.id}')">

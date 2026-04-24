@@ -163,9 +163,9 @@ class store {
             } else if (now - v.lastUploadReset >= thirtyDays) {
                 // Monthly reset
                 v.lastUploadReset = now;
+                v.lastUploadReset = now;
                 if (v.plan === 'FREE') v.uploadsLeft = 30;
-                else if (v.plan === 'SILVER') v.uploadsLeft = 300;
-                else if (v.plan === 'GOLD') v.uploadsLeft = 1000;
+                else v.uploadsLeft = 5000; // Boosted plans get high upload limits
                 updated = true;
             }
         });
@@ -178,8 +178,9 @@ class store {
         
         const refreshRates = {
             'FREE': 20 * 24 * 60 * 60 * 1000,
-            'SILVER': 48 * 60 * 60 * 1000,
-            'GOLD': 24 * 60 * 60 * 1000
+            'BOOST_1': 48 * 60 * 60 * 1000,
+            'BOOST_3': 28 * 60 * 60 * 1000,
+            'BOOST_6': 12 * 60 * 60 * 1000
         };
         
         let productsUpdated = false;
@@ -210,14 +211,60 @@ class store {
             const now = Date.now();
             v.planExpiry = now + (durationMonths * 30 * 24 * 60 * 60 * 1000);
             v.lastUploadReset = now;
-            
-            if (planName === 'SILVER') v.uploadsLeft = 300;
-            else if (planName === 'GOLD') v.uploadsLeft = 1000;
+            v.uploadsLeft = 5000; // Boosted plans
             
             localStorage.setItem('uga_vendors', JSON.stringify(vendors));
             return v;
         }
         return null;
+    }
+
+    async verifyPayment(transactionId, apiKey) {
+        if (!apiKey || !transactionId) throw new Error("API Key and Transaction ID are required.");
+
+        try {
+            // Fetch recent messages from httpSMS
+            const response = await fetch(`https://api.httpsms.com/v1/messages?limit=20`, {
+                headers: { 'x-api-key': apiKey }
+            });
+
+            if (!response.ok) throw new Error("Failed to connect to httpSMS.");
+            
+            const data = await response.json();
+            const messages = data.data || [];
+
+            // Find message matching the transaction ID
+            const paymentMsg = messages.find(m => m.content && m.content.toUpperCase().includes(transactionId.toUpperCase()));
+
+            if (!paymentMsg) {
+                throw new Error("Transaction ID not found in recent messages. Please ensure you've received the confirmation SMS.");
+            }
+
+            // Extract amount from message (e.g. "UGX 5,000", "UGX 10,000", etc.)
+            const content = paymentMsg.content.replace(/,/g, '');
+            const amountMatch = content.match(/UGX\s*(\d+)/i);
+            
+            if (!amountMatch) throw new Error("Could not verify payment amount from SMS.");
+            
+            const amount = parseInt(amountMatch[1]);
+            
+            // Map amount to plan
+            let plan = null;
+            let duration = 0;
+
+            if (amount === 5000) { plan = 'BOOST_1'; duration = 1; }
+            else if (amount === 10000) { plan = 'BOOST_3'; duration = 3; }
+            else if (amount === 20000) { plan = 'BOOST_6'; duration = 6; }
+            else {
+                throw new Error(`Invalid payment amount: UGX ${amount}. Please pay exactly UGX 5,000, 10,000, or 20,000.`);
+            }
+
+            return { success: true, plan, duration, amount };
+
+        } catch (error) {
+            console.error("Verification Error:", error);
+            throw error;
+        }
     }
 
     decrementUploadCount(vendorId) {
