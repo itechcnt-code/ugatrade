@@ -1,24 +1,30 @@
 :root {
-    /* Color Palette */
-    --primary: #2596be;
-    /* Custom Blue */
-    --primary-light: #7ec8e3;
-    --secondary: #0d9488;
-    /* Teal */
-    --secondary-light: #2dd4bf;
+    /* Color Palette - Premium Vibrant Blue */
+    --primary: #2563eb;
+    /* Electric Blue */
+    --primary-light: #3b82f6;
+    --primary-dark: #1e40af;
+    --secondary: #10b981;
+    /* Emerald Green */
     --accent: #f43f5e;
-    /* Rose */
+    /* Rose Accent */
+    --bg-main: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --text-light: #f8fafc;
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    
+    /* Layout Defaults */
+    --nav-height: 70px;
+    --border-radius: 12px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05);
 
     /* Backgrounds */
     --bg-dark: #0f172a;
     --bg-light: #f8fafc;
     --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.3);
-
-    /* Text */
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --text-light: #f8fafc;
 
     /* Spacing & Borders */
     --radius-sm: 0.5rem;
@@ -31,9 +37,9 @@
     --spacing-4: 2rem;
 
     /* Shadows */
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-glow: 0 0 20px rgba(37, 150, 190, 0.4);
+    --shadow-sm: var(--shadow);
+    --shadow-md: var(--shadow-lg);
+    --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.3);
 
     /* Transitions */
     --transition-fast: 0.15s ease;
@@ -452,7 +458,7 @@ a {
 .btn-primary {
     background: var(--primary);
     color: var(--text-light);
-    box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:hover {
@@ -1110,7 +1116,6 @@ body.immersive-mode .glass-footer {
     justify-content: flex-end;
     gap: 1rem;
     flex-shrink: 0;
-}
 }
 
 .modal-footer-fluid .btn {
@@ -1999,7 +2004,7 @@ body.immersive-mode .glass-nav {
     background: var(--primary);
     color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .btn-follow:not(.following):hover {
@@ -2437,41 +2442,6 @@ body.immersive-mode .glass-nav {
     font-weight: 600;
 }
 
-/* Notification Badge */
-.nav-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--accent);
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 700;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    animation: badgePulse 2s infinite;
-    z-index: 5;
-}
-
-.hub-item .nav-badge {
-    position: static;
-    margin-left: auto;
-    border: none;
-    box-shadow: none;
-}
-
-@keyframes badgePulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
-    70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
-}
-
 /* Discover Stores Page */
 .store-list-grid {
     display: grid;
@@ -2498,7 +2468,7 @@ body.immersive-mode .glass-nav {
 
 .store-entry-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(37, 150, 190, 0.15);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
 }
 
 .store-entry-header {

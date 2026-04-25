@@ -1444,7 +1444,7 @@ class App {
 
                 <div class="glass-panel" style="padding: 2.5rem; max-width: 500px; margin: 0 auto;">
                     <div class="text-center mb-4">
-                        <div style="width: 60px; height: 60px; background: rgba(37, 150, 190, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.5rem;">
+                        <div style="width: 60px; height: 60px; background: rgba(37, 99, 235, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem;">
                             <i class="fa-solid fa-lock"></i>
                         </div>
                         <h3 style="margin: 0; font-weight: 800;">Secure Your Account</h3>
@@ -1617,9 +1617,9 @@ class App {
                                     <td style="padding: 1rem; color: #64748b;">Refresh rate 12hrs</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 5,000</td>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">UGX 10,000</td>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 20,000</td>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: var(--primary);">UGX 5,000</td>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: var(--primary); border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">UGX 10,000</td>
+                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: var(--primary);">UGX 20,000</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2301,7 +2301,7 @@ class App {
             html += `
                 <div class="mb-3">
                     <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin-bottom: 0.5rem; font-weight: 700;">Suggested (From Document)</h4>
-                    <div class="d-flex justify-between align-center" style="background: rgba(37, 150, 190, 0.08); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(37, 150, 190, 0.2); cursor:pointer;" onclick="app.initiateNewChatShare('${matchingUser.id}', '${id}')">
+                    <div class="d-flex justify-between align-center" style="background: rgba(37, 99, 235, 0.08); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(37, 99, 235, 0.2); cursor:pointer;" onclick="app.initiateNewChatShare('${matchingUser.id}', '${id}')">
                         <div class="d-flex align-center gap-2">
                             ${this.renderAvatar(matchingUser, '40px')}
                             <div>
@@ -2842,10 +2842,10 @@ class App {
     }
 
     updateThemeColor(color) {
-        const themeColor = color || getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2596be';
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2563eb';
         const meta = document.querySelector('meta[name="theme-color"]');
         if (meta) {
-            meta.setAttribute('content', themeColor);
+            meta.setAttribute('content', primaryColor);
         }
     }
 
