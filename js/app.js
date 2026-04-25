@@ -15,10 +15,23 @@ class App {
         this.bottomNav = document.getElementById('bottomNav');
         
         // Navigation Listeners
+        const homeBtn = document.getElementById('homeBtn');
+        if (homeBtn) homeBtn.onclick = () => this.navigate('home');
+        
         const inboxBtn = document.getElementById('inboxBtn');
-        if (inboxBtn) {
-            inboxBtn.onclick = () => this.navigate('inbox');
-        }
+        if (inboxBtn) inboxBtn.onclick = () => this.navigate('inbox');
+        
+        const profileBtn = document.getElementById('profileBtn');
+        if (profileBtn) profileBtn.onclick = () => {
+            const loggedIn = auth.isLoggedIn();
+            this.navigate(loggedIn ? 'profile' : 'login');
+        };
+
+        const bottomSellBtn = document.getElementById('bottomSellBtn');
+        if (bottomSellBtn) bottomSellBtn.onclick = () => {
+            const loggedIn = auth.isLoggedIn();
+            this.navigate(loggedIn ? 'add-product' : 'register');
+        };
         
         // Context Tracking for Independent Store Search
         this.currentView = 'home';
@@ -198,7 +211,7 @@ class App {
         this.updateNotificationBadges();
         
         // Handle Split Layout Scrollbar Logic
-        const splitViews = ['home', 'shop', 'vendor', 'profile'];
+        const splitViews = ['home', 'shop', 'vendor', 'profile', 'dashboard'];
         if (splitViews.includes(view)) {
             this.appEl.classList.add('has-split-layout');
         } else {
@@ -288,11 +301,19 @@ class App {
         }
 
         this.mobileDrawerLinks.innerHTML = `
-            ${loggedIn ? '' : `
-                <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                    <a href="#login"><i class="fa-solid fa-user"></i> Vendor Login</a>
+            ${loggedIn ? `
+                <li><a href="javascript:void(0)" onclick="app.navigate('profile'); app.toggleDrawer(false)"><i class="fa-solid fa-circle-user"></i> My Profile Hub</a></li>
+                <li><a href="javascript:void(0)" onclick="app.navigate('dashboard'); app.toggleDrawer(false)"><i class="fa-solid fa-chart-line"></i> Sales Dashboard</a></li>
+                <li><a href="javascript:void(0)" onclick="app.navigate('add-product'); app.toggleDrawer(false)"><i class="fa-solid fa-plus"></i> Add New Product</a></li>
+                <li><a href="javascript:void(0)" onclick="app.navigate('inbox'); app.toggleDrawer(false)"><i class="fa-solid fa-message"></i> Messages</a></li>
+                <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                    <a href="javascript:void(0)" onclick="app.logout()" style="color: #dc3545;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                 </li>
-                <li><a href="#register" class="text-gradient"><i class="fa-solid fa-plus"></i> Become a Vendor</a></li>
+            ` : `
+                <li style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                    <a href="javascript:void(0)" onclick="app.navigate('login'); app.toggleDrawer(false)"><i class="fa-solid fa-user"></i> Vendor Login</a>
+                </li>
+                <li><a href="javascript:void(0)" onclick="app.navigate('register'); app.toggleDrawer(false)" class="text-gradient"><i class="fa-solid fa-plus"></i> Become a Vendor</a></li>
             `}
         `;
 
@@ -1269,7 +1290,8 @@ class App {
     renderDashboard(param) {
         if(!auth.isLoggedIn()) return this.navigate('login');
         
-        const user = db.getVendor(auth.getUser().id);
+        const user = db.getVendor(auth.getUser().id, true);
+        if(!user) return this.navigate('home');
         
         let filters = {vendorId: user.id};
         let dashboardTitle = "Dashboard";
