@@ -1,8 +1,8 @@
 :root {
     --admin-bg: #f8fafc;
-    --admin-sidebar: #1e3a8a;
-    --admin-sidebar-hover: #1e40af;
-    --admin-primary: #2563eb;
+    --admin-sidebar: #ffffff;
+    --admin-sidebar-hover: #eff6ff;
+    --admin-primary: #00aeef;
     --admin-success: #10b981;
     --admin-danger: #ef4444;
     --admin-warning: #f59e0b;
@@ -41,7 +41,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: white;
+    color: var(--admin-primary);
     text-decoration: none;
 }
 
@@ -57,7 +57,7 @@ body {
     gap: 1rem;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    color: #94a3b8;
+    color: #64748b;
     text-decoration: none;
     transition: all 0.2s;
     cursor: pointer;
@@ -65,7 +65,7 @@ body {
 
 .admin-nav-item:hover, .admin-nav-item.active {
     background: var(--admin-sidebar-hover);
-    color: white;
+    color: var(--admin-primary);
 }
 
 /* Main Content */

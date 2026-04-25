@@ -1444,7 +1444,7 @@ class App {
 
                 <div class="glass-panel" style="padding: 2.5rem; max-width: 500px; margin: 0 auto;">
                     <div class="text-center mb-4">
-                        <div style="width: 60px; height: 60px; background: rgba(37, 99, 235, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem;">
+                        <div style="width: 60px; height: 60px; background: rgba(0, 174, 239, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem;">
                             <i class="fa-solid fa-lock"></i>
                         </div>
                         <h3 style="margin: 0; font-weight: 800;">Secure Your Account</h3>
@@ -2301,7 +2301,7 @@ class App {
             html += `
                 <div class="mb-3">
                     <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin-bottom: 0.5rem; font-weight: 700;">Suggested (From Document)</h4>
-                    <div class="d-flex justify-between align-center" style="background: rgba(37, 99, 235, 0.08); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(37, 99, 235, 0.2); cursor:pointer;" onclick="app.initiateNewChatShare('${matchingUser.id}', '${id}')">
+                    <div class="d-flex justify-between align-center" style="background: rgba(0, 174, 239, 0.08); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(0, 174, 239, 0.2); cursor:pointer;" onclick="app.initiateNewChatShare('${matchingUser.id}', '${id}')">
                         <div class="d-flex align-center gap-2">
                             ${this.renderAvatar(matchingUser, '40px')}
                             <div>
@@ -2842,7 +2842,7 @@ class App {
     }
 
     updateThemeColor(color) {
-        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2563eb';
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#00aeef';
         const meta = document.querySelector('meta[name="theme-color"]');
         if (meta) {
             meta.setAttribute('content', primaryColor);

@@ -1,25 +1,27 @@
 :root {
-    /* Color Palette - Premium Vibrant Blue */
-    --primary: #2563eb;
-    /* Electric Blue */
-    --primary-light: #3b82f6;
+    /* Color Palette - Clean Electric */
+    --primary: #00aeef;
+    /* Electric Blue Accent */
+    --primary-light: #eff6ff;
+    /* Ultra-light blue tint */
     --primary-dark: #1e40af;
     --secondary: #10b981;
-    /* Emerald Green */
     --accent: #f43f5e;
-    /* Rose Accent */
-    --bg-main: #f8fafc;
+    --bg-main: #ffffff;
+    /* Pure White Base */
+    --bg-alt: #f8fafc;
+    /* Light Slate Base */
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --text-light: #f8fafc;
-    --glass: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.4);
+    --text-light: #ffffff;
+    --glass: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.05);
     
     /* Layout Defaults */
     --nav-height: 70px;
     --border-radius: 12px;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 
     /* Backgrounds */
     --bg-dark: #0f172a;
@@ -39,7 +41,7 @@
     /* Shadows */
     --shadow-sm: var(--shadow);
     --shadow-md: var(--shadow-lg);
-    --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.3);
+    --shadow-glow: 0 0 15px rgba(0, 174, 239, 0.15);
 
     /* Transitions */
     --transition-fast: 0.15s ease;
@@ -457,8 +459,8 @@ a {
 
 .btn-primary {
     background: var(--primary);
-    color: var(--text-light);
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    color: #ffffff;
+    box-shadow: 0 4px 14px 0 rgba(0, 174, 239, 0.39);
 }
 
 .btn-primary:hover {
@@ -2004,7 +2006,7 @@ body.immersive-mode .glass-nav {
     background: var(--primary);
     color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 174, 239, 0.3);
 }
 
 .btn-follow:not(.following):hover {
@@ -2468,7 +2470,7 @@ body.immersive-mode .glass-nav {
 
 .store-entry-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 174, 239, 0.15);
 }
 
 .store-entry-header {
