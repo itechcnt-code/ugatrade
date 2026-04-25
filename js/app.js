@@ -1363,7 +1363,8 @@ class App {
 
     renderSettings() {
         if(!auth.isLoggedIn()) return this.navigate('login');
-        const user = db.getVendor(auth.getUser().id);
+        const user = db.getVendor(auth.getUser().id, true);
+        if(!user) return this.navigate('profile');
 
         this.appEl.innerHTML = `
             <div class="container fade-in py-4">
@@ -1598,7 +1599,8 @@ class App {
 
     renderSubscription() {
         if(!auth.isLoggedIn()) return this.navigate('login');
-        const user = db.getVendor(auth.getUser().id);
+        const user = db.getVendor(auth.getUser().id, true);
+        if(!user) return this.navigate('profile');
         const apiKey = localStorage.getItem('httpsms_api_key') || '';
 
         this.appEl.innerHTML = `
@@ -1683,6 +1685,7 @@ class App {
     }
 
     async handleImagePreview(event, previewId, maxFiles = 1) {
+        const user = db.getVendor(auth.getUser().id, true, true);
         const files = Array.from(event.target.files);
         const preview = document.getElementById(previewId);
         if (!preview) return;
@@ -1747,8 +1750,9 @@ class App {
         }
     }
 
-    shareWhatsApp() {
-        const user = db.getVendor(auth.getUser().id);
+    handlePaymentSuccess(docType, plan) {
+        const user = db.getVendor(auth.getUser().id, true);
+        if(!user) return this.navigate('home');
         const url = encodeURIComponent(window.location.origin + window.location.pathname);
         const text = encodeURIComponent(`Shop amazing items on UgaTrade! ${url}`);
         window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
@@ -1817,7 +1821,8 @@ class App {
         if(errorDiv) errorDiv.style.display = 'none';
 
         try {
-            const user = db.getVendor(auth.getUser().id);
+            const user = db.getVendor(auth.getUser().id, true);
+            if(!user) return this.navigate('dashboard');
             if (user.uploadsLeft <= 0) {
                 throw new Error("You have reached your monthly upload limit. Please activate a premium plan or get bonus uploads!");
             }
@@ -2108,7 +2113,7 @@ class App {
     renderDocumentView(id) {
         if(!auth.isLoggedIn()) return this.navigate('login');
         const doc = db.getDocument(id);
-        const user = db.getVendor(auth.getUser().id);
+        const user = db.getVendor(auth.getUser().id, true);
         if(!doc || doc.vendorId !== user.id) return this.navigate('profile');
         
         const docRef = doc.id.slice(-6).toUpperCase();
