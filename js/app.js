@@ -1315,17 +1315,17 @@ class App {
                 </div>
                 
                 <div class="dashboard-stats-grid">
+                    <div class="glass-panel stat-card" onclick="app.navigate('subscription')" style="cursor: pointer;">
+                        <h3 class="text-muted">Current Plan</h3>
+                        <div class="stat-value" style="color: var(--secondary); font-size: 1.5rem;">${stats.plan.replace('_', ' ')}</div>
+                    </div>
                     <div class="glass-panel stat-card">
                         <h3 class="text-muted">Products</h3>
                         <div class="stat-value" style="color: var(--primary)">${stats.totalProducts}</div>
                     </div>
                     <div class="glass-panel stat-card">
-                        <h3 class="text-muted">Views</h3>
-                        <div class="stat-value" style="color: var(--secondary)">${stats.displayViews}</div>
-                    </div>
-                    <div class="glass-panel stat-card" onclick="app.navigate('inbox')" style="cursor: pointer;">
-                        <h3 class="text-muted">Messages</h3>
-                        <div class="stat-value" style="color: var(--primary)">${stats.totalMessages}</div>
+                        <h3 class="text-muted">Storage Left</h3>
+                        <div class="stat-value" style="color: var(--primary)">${stats.storageLeft}</div>
                     </div>
                 </div>
 
@@ -1619,18 +1619,24 @@ class App {
                     
                     <div class="pricing-grid">
                         <div class="pricing-card">
-                            <div class="pricing-duration">1 Month</div>
+                            <div class="pricing-duration">1 Month (Boost 1)</div>
                             <div class="pricing-refresh">Refresh every 48hrs</div>
+                            <div style="font-weight: 600; color: #64748b; margin-bottom: 0.5rem;">Up to 600 Products</div>
+                            <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">500 Invoices & 500 Receipts</div>
                             <div class="pricing-price">UGX 5,000</div>
                         </div>
                         <div class="pricing-card popular">
-                            <div class="pricing-duration">3 Months</div>
+                            <div class="pricing-duration">3 Months (Boost 2)</div>
                             <div class="pricing-refresh">Refresh every 24hrs</div>
+                            <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">Up to 600 Products</div>
+                            <div style="font-size: 0.85rem; color: var(--primary); margin-bottom: 1rem;">1,000 Invoices & 1,000 Receipts</div>
                             <div class="pricing-price">UGX 10,000</div>
                         </div>
                         <div class="pricing-card">
-                            <div class="pricing-duration">6 Months</div>
+                            <div class="pricing-duration">6 Months (Boost 3)</div>
                             <div class="pricing-refresh">Refresh every 12hrs</div>
+                            <div style="font-weight: 600; color: #64748b; margin-bottom: 0.5rem;">Up to 600 Products</div>
+                            <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Unlimited Invoices & Receipts</div>
                             <div class="pricing-price">UGX 20,000</div>
                         </div>
                     </div>
@@ -1817,8 +1823,12 @@ class App {
         try {
             const user = db.getVendor(auth.getUser().id, true);
             if(!user) return this.navigate('dashboard');
-            if (user.uploadsLeft <= 0) {
-                throw new Error("You have reached your monthly upload limit. Please activate a premium plan or get bonus uploads!");
+            
+            // Storage limit is now enforced within db.addProduct, but we can do a pre-check for better UX
+            const products = db.getProducts({vendorId: user.id, includeAll: true});
+            const limit = user.plan === 'FREE' ? 30 : 600;
+            if (products.length >= limit) {
+                throw new Error(`You have reached your product storage limit (${limit} products). Please upgrade your plan or delete old products to add more.`);
             }
 
             // Use pre-compressed images from buffer if available
@@ -1848,7 +1858,6 @@ class App {
             };
 
             db.addProduct(newProduct);
-            db.decrementUploadCount(user.id);
             
             alert("Product published successfully!");
             this.navigate('dashboard');

@@ -20,9 +20,9 @@ const CATEGORIES = [
 ];
 
 const INITIAL_VENDORS = [
-    { id: 'v1', name: 'Kampala Electronics Factory', location: 'Kampala', phone: '256701234567', whatsapp: '256701234567', storeName: 'K-Elec', email: 'vendor1@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' },
-    { id: 'v2', name: 'Modern Fashion Store', location: 'Entebbe', phone: '256771234567', whatsapp: '256771234567', storeName: 'K-Fashion', email: 'vendor2@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' },
-    { id: 'v3', name: 'Mbarara Furniture Hub', location: 'Mbarara', phone: '256788123456', whatsapp: '256788123456', storeName: 'Mbarara-Home', email: 'vendor3@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' }
+    { id: 'v1', name: 'Kampala Electronics Factory', location: 'Kampala', phone: '256701234567', whatsapp: '256701234567', storeName: 'K-Elec', email: 'vendor1@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, invoicesLeft: 30, receiptsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' },
+    { id: 'v2', name: 'Modern Fashion Store', location: 'Entebbe', phone: '256771234567', whatsapp: '256771234567', storeName: 'K-Fashion', email: 'vendor2@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, invoicesLeft: 30, receiptsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' },
+    { id: 'v3', name: 'Mbarara Furniture Hub', location: 'Mbarara', phone: '256788123456', whatsapp: '256788123456', storeName: 'Mbarara-Home', email: 'vendor3@demo.com', password: 'password123', plan: 'FREE', uploadsLeft: 30, invoicesLeft: 30, receiptsLeft: 30, lastUploadReset: Date.now(), planExpiry: null, status: 'active' }
 ];
 
 const INITIAL_PRODUCTS = [
@@ -153,21 +153,36 @@ class store {
         const thirtyDays = 30 * 24 * 60 * 60 * 1000;
         
         vendors.forEach(v => {
+            const docLimits = { 'FREE': 30, 'BOOST_1': 500, 'BOOST_3': 1000, 'BOOST_6': 999999 };
+            const limit = docLimits[v.plan || 'FREE'];
+
             // Check if plan expired securely
             if (v.plan !== 'FREE' && v.planExpiry && now > v.planExpiry) {
                 v.plan = 'FREE';
                 v.planExpiry = null;
                 v.uploadsLeft = 30;
+                v.invoicesLeft = 30;
+                v.receiptsLeft = 30;
                 v.lastUploadReset = now;
                 updated = true;
             } else if (now - v.lastUploadReset >= thirtyDays) {
                 // Monthly reset
                 v.lastUploadReset = now;
-                v.lastUploadReset = now;
-                if (v.plan === 'FREE') v.uploadsLeft = 30;
-                else v.uploadsLeft = 5000; // Boosted plans get high upload limits
+                if (v.plan === 'FREE') {
+                    v.uploadsLeft = 30;
+                    v.invoicesLeft = 30;
+                    v.receiptsLeft = 30;
+                } else {
+                    v.uploadsLeft = 600;
+                    v.invoicesLeft = limit;
+                    v.receiptsLeft = limit;
+                }
                 updated = true;
             }
+            
+            // Initialization for existing vendors without these fields
+            if (v.invoicesLeft === undefined) { v.invoicesLeft = limit; updated = true; }
+            if (v.receiptsLeft === undefined) { v.receiptsLeft = limit; updated = true; }
         });
         if (updated) localStorage.setItem('uga_vendors', JSON.stringify(vendors));
     }
@@ -177,7 +192,7 @@ class store {
         const products = JSON.parse(localStorage.getItem('uga_products') || '[]');
         
         const refreshRates = {
-            'FREE': 20 * 24 * 60 * 60 * 1000,
+            'FREE': 30 * 24 * 60 * 60 * 1000, // 30 days as requested
             'BOOST_1': 48 * 60 * 60 * 1000,
             'BOOST_3': 28 * 60 * 60 * 1000,
             'BOOST_6': 12 * 60 * 60 * 1000
@@ -211,7 +226,7 @@ class store {
             const now = Date.now();
             v.planExpiry = now + (durationMonths * 30 * 24 * 60 * 60 * 1000);
             v.lastUploadReset = now;
-            v.uploadsLeft = 5000; // Boosted plans
+            v.uploadsLeft = 600; // Paid plans
             
             localStorage.setItem('uga_vendors', JSON.stringify(vendors));
             return v;
@@ -344,9 +359,20 @@ class store {
     addProduct(product) {
         let products = JSON.parse(localStorage.getItem('uga_products') || '[]');
         
-        // Enforce hard cap to prevent quota issues
-        if (products.length >= 200) {
-            products = products.slice(-190); // Keep only most recent 190
+        // Enforce per-vendor storage limits
+        const vendor = this.getVendor(product.vendorId, true);
+        if (vendor) {
+            const vendorProductsCount = products.filter(p => p.vendorId === product.vendorId).length;
+            const limit = vendor.plan === 'FREE' ? 30 : 600;
+            
+            if (vendorProductsCount >= limit) {
+                throw new Error(`Storage Limit Reached: ${vendor.plan === 'FREE' ? 'Free' : 'Paid'} accounts are limited to ${limit} products. Please delete old items to add more.`);
+            }
+        }
+
+        // Enforce global safety cap to prevent LocalStorage quota issues
+        if (products.length >= 3000) {
+            products = products.slice(-2900); // Keep only most recent 2900
         }
 
         product.id = 'p' + Date.now();
@@ -354,7 +380,7 @@ class store {
         product.views = 0;
         product.likesCount = 0;
         product.savesCount = 0;
-        product.status = 'active'; // Products are active by default but can be hidden
+        product.status = 'active'; 
         products.push(product);
         
         const success = this.saveSafe('uga_products', products);
@@ -406,7 +432,7 @@ class store {
         const vendors = JSON.parse(localStorage.getItem('uga_vendors') || '[]');
         vendor.id = 'v' + Date.now();
         vendor.plan = 'FREE';
-        vendor.uploadsLeft = 30;
+        vendor.uploadsLeft = 30; // Still used as an indicator but storage limit is primary
         vendor.lastUploadReset = Date.now();
         vendor.planExpiry = null;
         vendor.status = 'pending'; // New vendors need approval
@@ -534,9 +560,15 @@ class store {
     }
 
     getVendorStats(vendorId) {
+        const vendor = this.getVendor(vendorId, true);
         const products = this.getProducts({vendorId});
+        const limit = vendor?.plan === 'FREE' ? 30 : 600;
+        
         const stats = {
             totalProducts: products.length,
+            storageLimit: limit,
+            storageLeft: Math.max(0, limit - products.length),
+            plan: vendor?.plan || 'FREE',
             totalViews: products.reduce((sum, p) => sum + (p.views || 0), 0),
             totalLikes: products.reduce((sum, p) => sum + (p.likesCount || 0), 0),
             totalSaves: products.reduce((sum, p) => sum + (p.savesCount || 0), 0),
@@ -747,9 +779,29 @@ class store {
         return docs.filter(d => d.vendorId === vendorId && (!type || d.type === type)).sort((a, b) => b.createdAt - a.createdAt);
     }
     
+    getDocument(id) {
+        const docs = JSON.parse(localStorage.getItem('uga_documents') || '[]');
+        return docs.find(d => d.id === id);
+    }
+    
     saveDocument(doc) {
         let docs = JSON.parse(localStorage.getItem('uga_documents') || '[]');
+        const vendors = JSON.parse(localStorage.getItem('uga_vendors') || '[]');
+        const vIndex = vendors.findIndex(v => v.id === doc.vendorId);
+        
         if (!doc.id) {
+            if (vIndex > -1) {
+                const vendor = vendors[vIndex];
+                const typeKey = doc.type.toLowerCase() === 'invoice' ? 'invoicesLeft' : 'receiptsLeft';
+                
+                if (vendor[typeKey] <= 0) {
+                    throw new Error(`Monthly ${doc.type} limit reached. Please upgrade or wait for reset.`);
+                }
+                
+                vendor[typeKey]--;
+                localStorage.setItem('uga_vendors', JSON.stringify(vendors));
+            }
+            
             doc.id = 'doc_' + Date.now() + Math.random().toString(36).substr(2, 9);
             doc.createdAt = Date.now();
             docs.push(doc);
