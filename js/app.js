@@ -193,7 +193,7 @@ class App {
         this.updateNotificationBadges();
         
         // Handle Split Layout Scrollbar Logic
-        const splitViews = ['home', 'shop', 'vendor', 'profile'];
+        const splitViews = ['home', 'shop', 'vendor', 'profile', 'dashboard'];
         if (splitViews.includes(view)) {
             this.appEl.classList.add('has-split-layout');
         } else {
