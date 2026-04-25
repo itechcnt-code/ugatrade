@@ -98,31 +98,31 @@
         <!-- Persistent Bottom Navigation (Mobile Only) -->
         <nav class="bottom-nav hide-desktop" id="bottomNav">
             <div class="bottom-nav-container">
-                <a href="javascript:void(0)" class="nav-item active" data-view="home" id="homeBtn">
+                <a href="javascript:void(0)" class="nav-item active" data-view="home" id="homeBtn" onclick="app.navigate('home')">
                     <div class="nav-icon-wrapper">
                         <i class="fa-solid fa-house"></i>
                     </div>
                     <span>Home</span>
                 </a>
-                <a href="javascript:void(0)" class="nav-item" id="bottomDrawerBtn" data-view="shop">
+                <a href="javascript:void(0)" class="nav-item" id="bottomDrawerBtn" data-view="shop" onclick="app.toggleDrawer(true)">
                     <div class="nav-icon-wrapper">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </div>
                     <span>Search</span>
                 </a>
                 <div class="nav-item-centered">
-                    <a href="javascript:void(0)" class="sell-btn-circle" id="bottomSellBtn">
+                    <a href="javascript:void(0)" class="sell-btn-circle" id="bottomSellBtn" onclick="app.navigate(auth.isLoggedIn() ? 'add-product' : 'register')">
                         <i class="fa-solid fa-plus"></i>
                     </a>
                     <span class="sell-label">Sell</span>
                 </div>
-                <a href="javascript:void(0)" class="nav-item" id="inboxBtn">
+                <a href="javascript:void(0)" class="nav-item" id="inboxBtn" onclick="app.navigate('inbox')">
                     <div class="nav-icon-wrapper">
                         <i class="fa-solid fa-message"></i>
                     </div>
                     <span>Inbox</span>
                 </a>
-                <a href="javascript:void(0)" class="nav-item" data-view="profile" id="profileBtn">
+                <a href="javascript:void(0)" class="nav-item" data-view="profile" id="profileBtn" onclick="app.navigate(auth.isLoggedIn() ? 'profile' : 'login')">
                     <div class="nav-icon-wrapper">
                         <i class="fa-solid fa-user"></i>
                     </div>

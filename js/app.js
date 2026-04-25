@@ -14,24 +14,7 @@ class App {
         this.drawerCategoryList = document.getElementById('drawerCategoryList');
         this.bottomNav = document.getElementById('bottomNav');
         
-        // Navigation Listeners
-        const homeBtn = document.getElementById('homeBtn');
-        if (homeBtn) homeBtn.onclick = () => this.navigate('home');
-        
-        const inboxBtn = document.getElementById('inboxBtn');
-        if (inboxBtn) inboxBtn.onclick = () => this.navigate('inbox');
-        
-        const profileBtn = document.getElementById('profileBtn');
-        if (profileBtn) profileBtn.onclick = () => {
-            const loggedIn = auth.isLoggedIn();
-            this.navigate(loggedIn ? 'profile' : 'login');
-        };
-
-        const bottomSellBtn = document.getElementById('bottomSellBtn');
-        if (bottomSellBtn) bottomSellBtn.onclick = () => {
-            const loggedIn = auth.isLoggedIn();
-            this.navigate(loggedIn ? 'add-product' : 'register');
-        };
+        // Navigation Listeners removed from constructor (now in index.html for reliability)
         
         // Context Tracking for Independent Store Search
         this.currentView = 'home';
@@ -330,18 +313,14 @@ class App {
         if(!this.bottomNav) return;
         const loggedIn = auth.isLoggedIn();
         const profileBtn = document.getElementById('profileBtn');
-        const bottomSellBtn = document.getElementById('bottomSellBtn');
 
         if(profileBtn) {
-            profileBtn.href = loggedIn ? '#profile' : '#login';
             profileBtn.innerHTML = `
-                <i class="fa-solid fa-user"></i>
+                <div class="nav-icon-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                </div>
                 <span>Profile</span>
             `;
-        }
-
-        if(bottomSellBtn) {
-            bottomSellBtn.href = loggedIn ? '#add-product' : '#register';
         }
 
         // Set Active class
@@ -1289,8 +1268,10 @@ class App {
 
     renderDashboard(param) {
         if(!auth.isLoggedIn()) return this.navigate('login');
+        const currentUser = auth.getUser();
+        if(!currentUser) return this.navigate('login');
         
-        const user = db.getVendor(auth.getUser().id, true);
+        const user = db.getVendor(currentUser.id, true);
         if(!user) return this.navigate('home');
         
         let filters = {vendorId: user.id};
@@ -2434,6 +2415,8 @@ class App {
     renderProfileHub() {
         if(!auth.isLoggedIn()) return this.navigate('login');
         const user = auth.getUser();
+        if(!user) return this.navigate('login');
+
         const totalLikes = db.getTotalLikesReceived(user.id);
         const unreadMessages = db.getUnreadCount(user.id);
         const unreadFeedback = db.getUnreadFeedbackCount(user.id);
