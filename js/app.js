@@ -1145,7 +1145,7 @@ class App {
         const pass = document.getElementById('loginPass').value;
         const res = auth.login(email, pass);
         if(res.success) {
-            this.navigate('dashboard');
+            this.navigate('profile');
         } else {
             const err = document.getElementById('loginError');
             err.innerText = res.message;
@@ -1248,7 +1248,7 @@ class App {
         const res = auth.register(info);
         if(res.success) {
             this.registrationDraft = null; // Clear draft on success
-            this.navigate('dashboard');
+            this.navigate('profile');
         } else {
             err.innerText = res.message;
             err.style.display = 'block';
