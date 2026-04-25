@@ -125,7 +125,12 @@ class App {
     }
 
     navigate(path, param = '') {
-        window.location.hash = param ? `${path}/${param}` : path;
+        const newHash = param ? `${path}/${param}` : path;
+        if (window.location.hash === '#' + newHash) {
+            this.handleRoute(); // Force refresh if hash is already the same
+        } else {
+            window.location.hash = newHash;
+        }
     }
 
     performSearch(query) {
@@ -1145,7 +1150,10 @@ class App {
         const pass = document.getElementById('loginPass').value;
         const res = auth.login(email, pass);
         if(res.success) {
-            this.navigate('profile');
+            // Add a small delay for mobile devices to ensure stable environment before navigation
+            setTimeout(() => {
+                this.navigate('profile');
+            }, 100);
         } else {
             const err = document.getElementById('loginError');
             err.innerText = res.message;
@@ -1248,7 +1256,10 @@ class App {
         const res = auth.register(info);
         if(res.success) {
             this.registrationDraft = null; // Clear draft on success
-            this.navigate('profile');
+            // Add a small delay for mobile devices to ensure stable environment before navigation
+            setTimeout(() => {
+                this.navigate('profile');
+            }, 100);
         } else {
             err.innerText = res.message;
             err.style.display = 'block';
