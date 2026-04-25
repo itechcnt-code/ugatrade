@@ -1302,14 +1302,86 @@ body.immersive-mode .glass-footer {
 
 /* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+/* Pricing Grid & Linear Scaling for Boost Page */
+.pricing-grid {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.pricing-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 2rem 1.5rem;
+    transition: var(--transition-hover);
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+}
+
+.pricing-card.popular {
+    border-color: var(--primary);
+    background: linear-gradient(to bottom, #ffffff, #f0f9ff);
+    transform: scale(1.02);
+    z-index: 2;
+}
+
+.pricing-card.popular::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: 12px;
+    right: -35px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+    letter-spacing: 1px;
+}
+
+.pricing-duration {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+}
+
+.pricing-refresh {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.pricing-price {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+@media (max-width: 768px) {
+    .pricing-grid {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .pricing-card.popular {
+        transform: none;
     }
 }
 

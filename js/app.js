@@ -1617,28 +1617,22 @@ class App {
                         <h2 style="margin: 0; font-size: 1.5rem; color: #1e293b; text-transform: uppercase; letter-spacing: 1px;">BOOST PLANS</h2>
                     </div>
                     
-                    <div class="table-responsive">
-                        <table class="w-100" style="border-collapse: collapse; text-align: center;">
-                            <thead>
-                                <tr style="border-bottom: 2px solid #e2e8f0;">
-                                    <th style="padding: 1.5rem; font-size: 1.2rem;">1 Month</th>
-                                    <th style="padding: 1.5rem; font-size: 1.2rem; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">3 Months</th>
-                                    <th style="padding: 1.5rem; font-size: 1.2rem;">6 Months</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="border-bottom: 1px solid #e2e8f0;">
-                                    <td style="padding: 1rem; color: #64748b;">Refresh rate 48hrs</td>
-                                    <td style="padding: 1rem; color: #64748b; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">Refresh rate 28hrs</td>
-                                    <td style="padding: 1rem; color: #64748b;">Refresh rate 12hrs</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 5,000</td>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">UGX 10,000</td>
-                                    <td style="padding: 1.5rem; font-size: 1.5rem; font-weight: 800; color: #00AEEF;">UGX 20,000</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <div class="pricing-duration">1 Month</div>
+                            <div class="pricing-refresh">Refresh every 48hrs</div>
+                            <div class="pricing-price">UGX 5,000</div>
+                        </div>
+                        <div class="pricing-card popular">
+                            <div class="pricing-duration">3 Months</div>
+                            <div class="pricing-refresh">Refresh every 24hrs</div>
+                            <div class="pricing-price">UGX 10,000</div>
+                        </div>
+                        <div class="pricing-card">
+                            <div class="pricing-duration">6 Months</div>
+                            <div class="pricing-refresh">Refresh every 12hrs</div>
+                            <div class="pricing-price">UGX 20,000</div>
+                        </div>
                     </div>
 
                     <div style="padding: 2rem; background: #fff;">
