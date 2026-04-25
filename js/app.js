@@ -193,7 +193,7 @@ class App {
         this.updateNotificationBadges();
         
         // Handle Split Layout Scrollbar Logic
-        const splitViews = ['home', 'shop', 'vendor', 'profile', 'dashboard'];
+        const splitViews = ['home', 'shop', 'vendor', 'profile'];
         if (splitViews.includes(view)) {
             this.appEl.classList.add('has-split-layout');
         } else {
@@ -408,7 +408,7 @@ class App {
                 <!-- Main Content: Hero + Products -->
                 <section class="main-panel fade-in">
                     <!-- Hero integrated here -->
-                    <div class="glass-panel mb-4" style="padding: clamp(2rem, 5vh, 4rem) 2rem; border-radius: 2rem; text-align: center; position: relative; overflow: hidden; margin-top: 0;">
+                    <div class="glass-panel mb-4" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(217, 0, 0, 0.05), rgba(250, 204, 21, 0.1)); padding: clamp(2rem, 5vh, 4rem) 2rem; border-radius: 2rem; text-align: center; position: relative; overflow: hidden; margin-top: 0;">
                         <h1 class="text-gradient welcome-note" style="margin-bottom: 1rem;">Discover Amazing Products</h1>
                         <p style="font-size: clamp(0.9rem, 3vw, 1.15rem); max-width: 600px; margin: 0 auto 1.5rem;" class="text-muted">
                             Shop from top vendors across Uganda
