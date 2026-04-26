@@ -5,30 +5,30 @@ class AdminApp {
         this.init();
     }
 
-    init() {
+    async init() {
         window.adminApp = this;
-        this.handleRoute();
+        await this.handleRoute();
         window.addEventListener('hashchange', () => this.handleRoute());
         this.updateNav();
     }
 
-    handleRoute() {
+    async handleRoute() {
         const hash = window.location.hash.slice(1) || 'dashboard';
         const parts = hash.split('/');
         this.currentView = parts[0];
         const param = parts[1];
         
         this.updateNav();
-        this.updateNotificationBadges();
+        await this.updateNotificationBadges();
 
         switch(this.currentView) {
-            case 'dashboard': this.renderDashboard(); break;
-            case 'vendors': this.renderVendors(); break;
-            case 'products': this.renderProducts(); break;
-            case 'messages': this.renderMessages(); break;
-            case 'chat': this.renderChat(param); break;
-            case 'settings': this.renderSettings(); break;
-            default: this.renderDashboard(); break;
+            case 'dashboard': await this.renderDashboard(); break;
+            case 'vendors': await this.renderVendors(); break;
+            case 'products': await this.renderProducts(); break;
+            case 'messages': await this.renderMessages(); break;
+            case 'chat': await this.renderChat(param); break;
+            case 'settings': await this.renderSettings(); break;
+            default: await this.renderDashboard(); break;
         }
     }
 
@@ -40,8 +40,8 @@ class AdminApp {
         });
     }
 
-    updateNotificationBadges() {
-        const unreadCount = db.getUnreadCount('admin');
+    async updateNotificationBadges() {
+        const unreadCount = await db.getUnreadCount('admin');
         const link = document.getElementById('adminMessagesLink');
         if (link) {
             let badge = link.querySelector('.admin-badge');
@@ -58,9 +58,9 @@ class AdminApp {
         }
     }
 
-    renderDashboard() {
-        const vendors = db.getAllVendorsAdmin();
-        const products = db.getAllProductsAdmin();
+    async renderDashboard() {
+        const vendors = await db.getAllVendorsAdmin();
+        const products = await db.getAllProductsAdmin();
         const pendingVendors = vendors.filter(v => v.status === 'pending').length;
         const activeVendors = vendors.filter(v => v.status === 'active').length;
 
@@ -95,8 +95,8 @@ class AdminApp {
         `;
     }
 
-    renderVendors() {
-        const vendors = db.getAllVendorsAdmin();
+    async renderVendors() {
+        const vendors = await db.getAllVendorsAdmin();
 
         this.mainEl.innerHTML = `
             <div class="admin-header">
@@ -145,9 +145,9 @@ class AdminApp {
         `;
     }
 
-    renderProducts() {
-        const products = db.getAllProductsAdmin();
-        const vendors = db.getAllVendorsAdmin();
+    async renderProducts() {
+        const products = await db.getAllProductsAdmin();
+        const vendors = await db.getAllVendorsAdmin();
 
         this.mainEl.innerHTML = `
             <div class="admin-header">
@@ -197,28 +197,28 @@ class AdminApp {
         `;
     }
 
-    toggleVendorStatus(id, status) {
+    async toggleVendorStatus(id, status) {
         if(confirm(`Are you sure you want to change this vendor status to ${status}?`)) {
-            db.updateVendorStatus(id, status);
-            this.renderVendors();
+            await db.updateVendorStatus(id, status);
+            await this.renderVendors();
         }
     }
 
-    toggleProductStatus(id, status) {
-        db.updateProductStatus(id, status);
-        this.renderProducts();
+    async toggleProductStatus(id, status) {
+        await db.updateProductStatus(id, status);
+        await this.renderProducts();
     }
 
-    deleteProduct(id) {
+    async deleteProduct(id) {
         if(confirm("Are you sure you want to permanently delete this product?")) {
-            db.deleteProduct(id);
-            this.renderProducts();
+            await db.deleteProduct(id);
+            await this.renderProducts();
         }
     }
 
     // Messaging System
-    renderMessages() {
-        const chats = db.getChats('admin');
+    async renderMessages() {
+        const chats = await db.getChats('admin');
 
         this.mainEl.innerHTML = `
             <div class="admin-header">
@@ -226,9 +226,9 @@ class AdminApp {
             </div>
 
             <div class="chat-list-container">
-                ${chats.length > 0 ? chats.map(chat => {
+                ${chats.length > 0 ? (await Promise.all(chats.map(async chat => {
                     const vendorId = chat.participants.find(id => id !== 'admin');
-                    const vendor = db.getVendor(vendorId) || { storeName: 'Unknown Vendor' };
+                    const vendor = await db.getVendor(vendorId) || { storeName: 'Unknown Vendor' };
                     const unread = (chat.lastMessageAt || 0) > ((chat.lastReadAt && chat.lastReadAt['admin']) ? chat.lastReadAt['admin'] : 0);
 
                     return `
@@ -248,7 +248,7 @@ class AdminApp {
                             </div>
                         </div>
                     `;
-                }).join('') : `
+                }))).join('') : `
                     <div class="admin-card text-center">
                         <p class="text-muted">No messages found. Start a conversation from the Vendor Management tab.</p>
                     </div>
@@ -257,16 +257,16 @@ class AdminApp {
         `;
     }
 
-    renderChat(chatId) {
-        const chat = db.getChat(chatId);
+    async renderChat(chatId) {
+        const chat = await db.getChat(chatId);
         if (!chat) return location.hash = 'messages';
 
         const vendorId = chat.participants.find(id => id !== 'admin');
-        const vendor = db.getVendor(vendorId) || { storeName: 'Unknown Vendor' };
-        const messages = db.getMessages(chatId);
+        const vendor = await db.getVendor(vendorId) || { storeName: 'Unknown Vendor' };
+        const messages = await db.getMessages(chatId);
 
-        db.markAsRead(chatId, 'admin');
-        this.updateNotificationBadges();
+        await db.markAsRead(chatId, 'admin');
+        await this.updateNotificationBadges();
 
         this.mainEl.innerHTML = `
             <div class="admin-header">
@@ -324,14 +324,14 @@ class AdminApp {
         }
     }
 
-    handleSendMessage(chatId) {
+    async handleSendMessage(chatId) {
         const input = document.getElementById('chatInput');
         const text = input.value.trim();
         if (!text) return;
 
-        db.sendMessage(chatId, 'admin', text);
+        await db.sendMessage(chatId, 'admin', text);
         input.value = '';
-        this.renderChat(chatId);
+        await this.renderChat(chatId);
     }
 
     async handleImageShare(chatId, file) {
@@ -340,8 +340,8 @@ class AdminApp {
             const base64Str = e.target.result;
             const compressed = await this.compressImage(base64Str, 1200, 0.7);
             
-            db.sendMessage(chatId, 'admin', compressed, 'image');
-            this.renderChat(chatId);
+            await db.sendMessage(chatId, 'admin', compressed, 'image');
+            await this.renderChat(chatId);
         };
         reader.readAsDataURL(file);
     }
@@ -370,8 +370,8 @@ class AdminApp {
         });
     }
 
-    startChatWithVendor(vendorId) {
-        const chat = db.getOrCreateChat('admin', vendorId);
+    async startChatWithVendor(vendorId) {
+        const chat = await db.getOrCreateChat('admin', vendorId);
         location.hash = `chat/${chat.id}`;
     }
 

@@ -42,7 +42,8 @@ const createCategoryIcon = (category) => {
     `;
 };
 
-const createVendorCard = (vendor) => {
+const createVendorCard = async (vendor) => {
+    const vendorProducts = await db.getProducts({vendorId: vendor.id});
     return `
         <div class="product-card text-center glass-panel" style="padding: 2rem 1rem;" onclick="app.navigate('vendor', '${vendor.id}')">
             <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--secondary)); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; overflow: hidden;">
@@ -52,14 +53,14 @@ const createVendorCard = (vendor) => {
                 }
             </div>
             <h3>${vendor.storeName}</h3>
-            <p class="text-muted"><i class="fa-solid fa-boxes-stacked"></i> ${db.getProducts({vendorId: vendor.id}).length} items</p>
+            <p class="text-muted"><i class="fa-solid fa-boxes-stacked"></i> ${vendorProducts.length} items</p>
             <button class="btn btn-outline mt-2 w-100">Visit Store</button>
         </div>
     `;
 }
 
-const createSidebar = () => {
-    const categories = db.getCategories();
+const createSidebar = async () => {
+    const categories = await db.getCategories();
     return `
         <aside class="sidebar-panel slide-in hide-mobile">
             <div class="category-sidebar-grid">
@@ -69,8 +70,8 @@ const createSidebar = () => {
     `;
 };
 
-const createDrawerCategoryList = () => {
-    const categories = db.getCategories();
+const createDrawerCategoryList = async () => {
+    const categories = await db.getCategories();
     
     // Context-aware navigation setup
     const isVendorView = window.app && app.currentView === 'vendor' && app.currentVendorId;
@@ -96,3 +97,4 @@ const createDrawerCategoryList = () => {
         </div>
     `;
 };
+

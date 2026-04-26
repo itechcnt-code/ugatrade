@@ -1,51 +1,79 @@
 // auth.js
 class Auth {
     constructor() {
-        this.currentUser = JSON.parse(localStorage.getItem('uga_current_user') || 'null');
-        this.listeners = [];
-    }
-
-    login(email, password) {
-        const vendors = JSON.parse(localStorage.getItem('uga_vendors') || '[]');
-        const vendor = vendors.find(v => (v.email === email || v.phone === email) && v.password === password);
-        
-        if (vendor) {
-            const {password: pwd, ...info} = vendor;
-            this.currentUser = info;
-            localStorage.setItem('uga_current_user', JSON.stringify(this.currentUser));
-            this.notify();
-            return { success: true };
-        }
-        return { success: false, message: 'Invalid credentials' };
-    }
-
-    register(vendorInfo) {
-        const vendors = JSON.parse(localStorage.getItem('uga_vendors') || '[]');
-        if (vendors.some(v => v.email === vendorInfo.email || v.phone === vendorInfo.phone)) {
-             return { success: false, message: 'Email or phone already exists' };
-        }
-        const newVendor = db.addVendor(vendorInfo);
-        const {password: pwd, ...info} = newVendor;
-        this.currentUser = info;
-        localStorage.setItem('uga_current_user', JSON.stringify(this.currentUser));
-        this.notify();
-        return { success: true };
-    }
-
-    logout() {
         this.currentUser = null;
-        localStorage.removeItem('uga_current_user');
-        this.notify();
+        this.listeners = [];
+        this.init();
+    }
+
+    init() {
+        fAuth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Fetch extra vendor info from Firestore
+                const doc = await fDb.collection('vendors').doc(user.uid).get();
+                if (doc.exists) {
+                    this.currentUser = { id: user.uid, email: user.email, ...doc.data() };
+                } else {
+                    // Fallback or guest user
+                    this.currentUser = { id: user.uid, email: user.email };
+                }
+            } else {
+                this.currentUser = null;
+            }
+            this.notify();
+        });
+    }
+
+    async login(email, password) {
+        try {
+            await fAuth.signInWithEmailAndPassword(email, password);
+            return { success: true };
+        } catch (error) {
+            console.error("Login Error:", error);
+            return { success: false, message: error.message };
+        }
+    }
+
+    async register(vendorInfo) {
+        try {
+            const { email, password, ...otherInfo } = vendorInfo;
+            const userCredential = await fAuth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // Save extra info to Firestore
+            await fDb.collection('vendors').doc(user.uid).set({
+                ...otherInfo,
+                email: email,
+                id: user.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                plan: 'FREE',
+                status: 'pending'
+            });
+
+            return { success: true };
+        } catch (error) {
+            console.error("Registration Error:", error);
+            return { success: false, message: error.message };
+        }
+    }
+
+    async logout() {
+        await fAuth.signOut();
     }
 
     getUser() {
         return this.currentUser;
     }
 
-    updateUser(updatedInfo) {
-        this.currentUser = { ...this.currentUser, ...updatedInfo };
-        localStorage.setItem('uga_current_user', JSON.stringify(this.currentUser));
-        this.notify();
+    async updateUser(updatedInfo) {
+        if (!this.currentUser) return;
+        try {
+            await fDb.collection('vendors').doc(this.currentUser.id).update(updatedInfo);
+            this.currentUser = { ...this.currentUser, ...updatedInfo };
+            this.notify();
+        } catch (error) {
+            console.error("Update User Error:", error);
+        }
     }
 
     isLoggedIn() {
@@ -54,6 +82,8 @@ class Auth {
     
     onChange(fn) {
         this.listeners.push(fn);
+        // Immediate notification if we already have a user
+        if (this.currentUser) fn(this.currentUser);
     }
     
     notify() {
@@ -62,3 +92,4 @@ class Auth {
 }
 
 const auth = new Auth();
+
